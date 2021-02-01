@@ -119,7 +119,7 @@ func (a *agent) Push(route string, v interface{}) error {
 	}
 
 	if len(a.chSend) >= agentWriteBacklog {
-		return ErrBufferExceed
+		//return ErrBufferExceed
 	}
 
 	if env.Debug {
@@ -174,7 +174,7 @@ func (a *agent) ResponseMid(mid uint64, v interface{}) error {
 	}
 
 	if len(a.chSend) >= agentWriteBacklog {
-		return ErrBufferExceed
+		//return ErrBufferExceed
 	}
 
 	if env.Debug {
