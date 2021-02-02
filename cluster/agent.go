@@ -236,6 +236,20 @@ func (a *agent) setStatus(state int32) {
 	atomic.StoreInt32(&a.state, state)
 }
 
+func (a *agent) write0(chWrite chan []byte) {
+	for {
+		select {
+		case data := <-chWrite:
+			// close agent while low-level conn broken
+			if _, err := a.conn.Write(data); err != nil {
+				log.Println(err.Error())
+				return
+			}
+
+		}
+	}
+}
+
 func (a *agent) write() {
 	ticker := time.NewTicker(env.Heartbeat)
 	chWrite := make(chan []byte, agentWriteBacklog)
@@ -249,6 +263,8 @@ func (a *agent) write() {
 			log.Println(fmt.Sprintf("Session write goroutine exit, SessionID=%d, UID=%d", a.session.ID(), a.session.UID()))
 		}
 	}()
+
+	go a.write0(chWrite)
 
 	for {
 		select {
